@@ -1,0 +1,23 @@
+{
+    "extends": [
+        "next",
+        "next/core-web-vitals",
+        "plugin:prettier/recommended"
+    ],
+    "rules": {
+        "semi": ["error", "always"], // 要求使用分號
+        "quotes": ["error", "single", { "avoidEscape": true, "allowTemplateLiterals": false }], // 強制使用單引號，除了內部有 ${} 與換行，才允許反引號「`」
+        "indent": ["error", 4, { "SwitchCase": 1 }], // 要求使用 4 個空格作為一個 indent
+        "no-multiple-empty-lines": ["error", { "max": 1, "maxEOF": 1 }], // 禁止多行空行
+        "no-unused-vars": "warn", // 禁止未使用的變數
+        "no-console": "warn", //  提醒在 commit 前把測試用的 console 關掉
+        "arrow-spacing": ["error", { "before": true, "after": true }], // 要求箭頭函數的前後有空格
+        "comma-spacing": ["error", { "before": false, "after": true }], // 要求逗號前有空格
+        "space-infix-ops": ["error", { "int32Hint": false }], // 要求操作符周圍有空格
+        "space-before-blocks": ["error", "always"], // 要求使用一個空格在 blocks 前
+        "space-before-function-paren": ["error", "never"], // 要求在 function 的左括號前有一個空格
+        "space-in-parens": ["error", "never"], // 要求在括號中使用一個空格
+        "block-spacing": ["error", "always"], // 要求使用一個空格在 blocks 中
+        "eol-last": ["error", "always"] // 檔案最後需要留有一行
+    }
+}

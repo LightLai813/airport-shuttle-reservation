@@ -1,0 +1,18 @@
+# Dependencies
+node_modules
+/.pnp
+.pnp.js
+
+# Production
+/build
+
+# Next.js auto-generated
+/.next/
+/out/
+
+# IDE/editor
+*.vscode
+
+# OS generated files
+.DS_Store
+Thumbs.db
