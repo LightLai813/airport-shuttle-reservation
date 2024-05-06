@@ -10,6 +10,9 @@ node_modules
 /.next/
 /out/
 
+# env
+.env
+
 # IDE/editor
 *.vscode
 
