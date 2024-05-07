@@ -5,7 +5,6 @@ let tokenExpiration: number | null = null; // 儲存 token 過期時間
 
 // 取得 TDX token
 async function getAuthorizationHeader() {
-    console.log({ cachedToken, tokenExpiration });
     // TDX token 有效期為 1 天，所以如果 cache 中有 token，且尚未過期，就直接返回 cache token，減少 API request 次數
     if (cachedToken && tokenExpiration && Date.now() < tokenExpiration) {
         return cachedToken;
@@ -32,7 +31,7 @@ async function getAuthorizationHeader() {
     return cachedToken;
 }
 
-// 將使用者輸入的ㄗ字串拆分成 airlineID 和 flightNumber
+// 將使用者輸入的字串拆分成 airlineID 和 flightNumber
 function splitString(str: string) {
     // 使用正規表達式拆分字串
     const matches = str.match(/^([A-Za-z]+)(\d+)$/);
@@ -70,8 +69,6 @@ export default async function checkFlight(flightID: string): Promise<string> {
         });
 
         const data = await resp.json();
-
-        console.log({ data });
 
         return data.length > 0 ? 'flight_exists' : 'flight_not_exists';
     } catch (error) {
