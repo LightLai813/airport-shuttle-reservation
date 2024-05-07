@@ -35,9 +35,11 @@ const InputField = forwardRef(({
         <InputLabel
             className="mt-5"
             shrink={true}
+            htmlFor={`TXT_${name}`}
         >{label}</InputLabel>
         <TextField
             inputRef={ref}
+            id={`TXT_${name}`}
             name={name}
             value={value}
             placeholder={placeholder}
@@ -123,9 +125,11 @@ export default function Page() {
     };
 
     // 表單送出
-    const handleSubmit = async (formData: FormData) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
         startTransition(async () => {
-            const result = await checkFlight(formData.get('flightNumber') as string);
+            const result = await checkFlight(formData.flightNumber);
 
             switch (result) {
                 case 'flight_exists':
@@ -178,7 +182,7 @@ export default function Page() {
 
     return (
         <div className="w-full max-w-[400px] h-screen flex flex-col items-center mx-auto p-8">
-            <form className="w-full" action={handleSubmit}>
+            <form className="w-full" action="#" onSubmit={handleSubmit}>
                 <FormLabel component="legend">班機資訊</FormLabel>
                 <FormGroup>
                     <InputLabel
