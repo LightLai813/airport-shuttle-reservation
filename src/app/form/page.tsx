@@ -88,11 +88,11 @@ export default function Page() {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
 
-        // 將小寫字母轉換為大寫，統一使用者輸入資訊
-        const uppercaseValue = value.toUpperCase();
+        // 除了 notes 欄位，其他欄位將小寫字母轉換為大寫，統一使用者輸入資訊
+        const formatValue = name === 'notes' ? value : value.toUpperCase();
         setFormData((prev) => ({
             ...prev,
-            [name]: uppercaseValue
+            [name]: formatValue
         }));
 
         // 檢查輸入值是否符合格式，並更新錯誤訊息
@@ -101,21 +101,21 @@ export default function Page() {
             case 'id':
                 setErrors((prev) => ({
                     ...prev,
-                    [name]: /^[A-Z0-9]+$/.test(uppercaseValue) ? null : '僅接受英文字母和數字'
+                    [name]: /^[A-Z0-9]+$/.test(formatValue) ? null : '僅接受英文字母和數字'
                 }));
                 break;
 
             case 'name':
                 setErrors((prev) => ({
                     ...prev,
-                    name: /^[A-Z\s]+$/.test(uppercaseValue) ? null : '僅接受英文字母和空格'
+                    name: /^[A-Z\s]+$/.test(formatValue) ? null : '僅接受英文字母和空格'
                 }));
                 break;
 
             case 'phone':
                 setErrors((prev) => ({
                     ...prev,
-                    phone: /^[0-9]+$/.test(uppercaseValue) ? null : '僅接受數字'
+                    phone: /^[0-9]+$/.test(formatValue) ? null : '僅接受數字'
                 }));
                 break;
 
