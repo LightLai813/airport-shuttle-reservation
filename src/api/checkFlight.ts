@@ -1,35 +1,45 @@
 'use server';
 
-let cachedToken: string | null = null; // 儲存 token
-let tokenExpiration: number | null = null; // 儲存 token 過期時間
-
 // 取得 TDX token
-async function getAuthorizationHeader() {
-    // TDX token 有效期為 1 天，所以如果 cache 中有 token，且尚未過期，就直接返回 cache token，減少 API request 次數
-    if (cachedToken && tokenExpiration && Date.now() < tokenExpiration) {
+function createTokenManager() {
+    let cachedToken: string | null = null; // 儲存 token
+    let tokenExpiration: number | null = null; // 儲存 token 過期時間
+
+    // 取得 TDX token
+    async function getAuthorizationHeader() {
+        // TDX token 有效期為 1 天，所以如果 cache 中有 token，且尚未過期，就直接返回 cache token，減少 API request 次數
+        if (cachedToken && tokenExpiration && Date.now() < tokenExpiration) {
+            return cachedToken;
+        }
+
+        const params = {
+            grant_type: "client_credentials",
+            client_id: process.env.TDX_CLIENT_ID,
+            client_secret: process.env.TDX_CLIENT_SECRET,
+        };
+
+        const resp = await fetch('https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token', {
+            method: 'POST',
+            headers: {
+                'Accept-Encoding': 'br,gzip',
+            },
+            body: new URLSearchParams(params),
+        });
+
+        const data = await resp.json();
+        cachedToken = data.access_token;
+        tokenExpiration = Date.now() + (data.expires_in * 1000);
+
         return cachedToken;
     }
 
-    const params = {
-        grant_type: "client_credentials",
-        client_id: process.env.TDX_CLIENT_ID,
-        client_secret: process.env.TDX_CLIENT_SECRET,
+    return {
+        getAuthorizationHeader,
     };
-
-    const resp = await fetch('https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token', {
-        method: 'POST',
-        headers: {
-            'Accept-Encoding': 'br,gzip',
-        },
-        body: new URLSearchParams(params),
-    });
-
-    const data = await resp.json();
-    cachedToken = data.access_token;
-    tokenExpiration = Date.now() + (data.expires_in * 1000);
-
-    return cachedToken;
 }
+
+const tokenManager = createTokenManager();
+
 
 // 將使用者輸入的字串拆分成 airlineID 和 flightNumber
 function splitString(str: string) {
@@ -52,7 +62,7 @@ export default async function checkFlight(flightID: string): Promise<string> {
         const flightInfo = splitString(flightID);
         if (!flightInfo) return 'flight_not_exists';
 
-        const accessToken = await getAuthorizationHeader();
+        const accessToken = await tokenManager.getAuthorizationHeader();
         const params = {
             $format: 'JSON',
             $select: 'AirlineID,FlightNumber',
